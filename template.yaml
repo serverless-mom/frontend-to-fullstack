@@ -22,6 +22,10 @@ Resources:
         Variables:
           TABLE_NAME: !Ref table72FC655F
           TABLE_ARN: !GetAtt table72FC655F.Arn
+          DB_INSTANCE: !Ref databaseFB989970
+          DB_ADDRESS: !GetAtt databaseFB989970.Endpoint.Address
+          DB_PORT: !GetAtt databaseFB989970.Endpoint.Port
+          DB_ARN: !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:db:${databaseFB989970}
       Events:
         apiC3E555F:
           Type: Api
@@ -108,6 +112,59 @@ Resources:
                 uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${functionD031CE3B.Arn}/invocations
               responses: {}
       EndpointConfiguration: REGIONAL
+  databaseFB989970:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: '5'
+      AllowMajorVersionUpgrade: true
+      AutoMinorVersionUpgrade: true
+      BackupRetentionPeriod: '1'
+      CopyTagsToSnapshot: true
+      DBInstanceClass: db.t2.micro
+      DBSubnetGroupName: !Ref databaseFB989970SubnetGroup
+      Engine: mariadb
+      EngineVersion: '10.2'
+      MasterUsername: root
+      MasterUserPassword: movie_reference
+      MultiAZ: false
+      PubliclyAccessible: true
+      StorageType: gp2
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Database ${ResourceName}
+            - ResourceName: crm
+      VPCSecurityGroups:
+        - !Ref databaseFB989970SecurityGroup
+    Metadata:
+      StackeryName: crm
+  databaseFB989970SubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: !Sub
+        - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Database ${ResourceName} VPC Subnets
+        - ResourceName: databaseFB989970
+      SubnetIds: !Ref DefaultVPCSubnets
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Database ${ResourceName} VPC Subnets
+            - ResourceName: databaseFB989970
+  databaseFB989970SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Database Security Group
+      SecurityGroupIngress:
+        CidrIp: 0.0.0.0/0
+        FromPort: 3306
+        IpProtocol: tcp
+        ToPort: 3306
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Database ${ResourceName} VPC Security Group
+            - ResourceName: crm
+      VpcId: !Ref DefaultVPCId
 Parameters:
   StackeryStackTagName:
     Type: String
@@ -118,3 +175,9 @@ Parameters:
   StackeryEnvironmentAPIGatewayStageName:
     Type: String
     Description: Environment name used for API Gateway Stage names (injected by Stackery at deployment time)
+  DefaultVPCId:
+    Type: AWS::EC2::VPC::Id
+    Description: AWS account-specific default VPC ID (injected by Stackery at deployment time)
+  DefaultVPCSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: AWS account-specific default VPC subnets (injected by Stackery at deployment time)
