@@ -29,10 +29,6 @@ Resources:
             Path: /home
             Method: GET
             RestApiId: !Ref apiC3E555F
-        timerD15D3F24:
-          Type: Schedule
-          Properties:
-            Schedule: rate(2 minutes)
     Metadata:
       StackeryName: welcome-site
   function51513AFD:
