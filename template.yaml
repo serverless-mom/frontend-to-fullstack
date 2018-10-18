@@ -133,11 +133,11 @@ Resources:
         - Key: Name
           Value: !Sub
             - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Database ${ResourceName}
-            - ResourceName: crm
+            - ResourceName: crm-store
       VPCSecurityGroups:
         - !Ref databaseFB989970SecurityGroup
     Metadata:
-      StackeryName: crm
+      StackeryName: crm-store
   databaseFB989970SubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
@@ -163,7 +163,7 @@ Resources:
         - Key: Name
           Value: !Sub
             - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Database ${ResourceName} VPC Security Group
-            - ResourceName: crm
+            - ResourceName: crm-store
       VpcId: !Ref DefaultVPCId
 Parameters:
   StackeryStackTagName:
