@@ -45,8 +45,8 @@ Resources:
       CodeUri: src/function51513AFD
       Handler: index.handler
       Runtime: nodejs8.10
-      MemorySize: 3008
-      Timeout: 30
+      MemorySize: 2368
+      Timeout: 20
       Tracing: Active
       Policies:
         - AWSXrayWriteOnlyAccess
